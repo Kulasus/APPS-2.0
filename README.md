@@ -23,4 +23,3 @@ Repository for Architecture of computers and parallel systems course on VŠB
 
 ## Authors:
 @Kulasus, @lolray
- syntax
