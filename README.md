@@ -10,7 +10,7 @@ Repository for Architecture of computers and parallel systems course on VŠB
 
 ## Useful links:
 [Petr Olivka's web page about course](http://poli.cs.vsb.cz/edu/apps) </br>
-[Course syllabus](http://poli.cs.vsb.cz/edu/apps/) </br>
+[Course syllabus](http://poli.cs.vsb.cz/edu/apps/lab/apps-syllabus.pdf) </br>
 [CUDA programming](http://poli.cs.vsb.cz/edu/apps/cuda/cuda-programming.pdf) </br>
 [CUDA tutorial](https://developer.nvidia.com/cuda-education-training)
 
