@@ -13,11 +13,13 @@ GNU General Public License v3.0
 [CUDA tutorial](https://developer.nvidia.com/cuda-education-training)
 
 ## Current TODOs:
-- [ ] Logging
-- [ ] LEDs
-- [ ] LEDs with PWM
+- [X] Logging
+- [X] LEDs
+- [X] LEDs with PWM
+- [ ] Test PwmLed class
 
 ## LEDs:
+Source code for Leds is now in LEDs/PWM-BINARY/main.cpp
 
 ## Authors:
 @Kulasus, @lolray
