@@ -80,14 +80,24 @@ int main()
 
 	while (1)
 	{
-		if(!g_buttons[3] && currentIndex < 7){
-			currentIndex++;
+		if(!g_buttons[3]){
+			if(currentIndex == 7){
+				currentIndex = 0;
+			}
+			else{
+				currentIndex++;
+			}
 			g_pc.printf("Current INDEX: ");
 			g_pc.printf("%d\r\n", currentIndex);
 			wait_ms(150);
 		}
-		if(!g_buttons[2] && currentIndex > 0){
-			currentIndex--;
+		if(!g_buttons[2]){
+			if(currentIndex == 0){
+				currentIndex = 7;
+			}
+			else{
+				currentIndex--;
+			}
 			g_pc.printf("Current INDEX: ");
 			g_pc.printf("%d\r\n", currentIndex);
 			wait_ms(150);
@@ -102,3 +112,5 @@ int main()
 		}
 	}
 }
+
+
