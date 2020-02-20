@@ -1,8 +1,8 @@
 #include "mbed.h"
 
 // Constant variables
-static const int g_numOfPwmLeds = 8;
-static const float ledIncrease = 0.05;
+static const int g_numOfPwmLeds = 10;
+static const float ledIncrease = 0.1;
 static const int g_numOfRedLeds = 10;
 static const int g_numOfButtons = 4;
 
@@ -19,23 +19,29 @@ DigitalIn g_buttons[g_numOfButtons] = {(PTC9),(PTC10),(PTC11),(PTC12)};
 struct PwmLed{
 		DigitalOut led;
 		float brightness;
-		static const int timeUnit = 15; //Number of all states
+		static const int timeUnit = 10; //Number of all states
+		int timeFrame;
 
 		//Just a setter
 		void setBrightness(float brightness){
 			this->brightness = brightness;
 		}
-		void update(int timeFrame) //timeFrame is one state of all states in timeUnit
+		void update() //timeFrame is one state of all states in timeUnit
 		{
+			if(timeFrame == 15){
+				timeFrame = 0;
+			}
 			if (timeFrame < (timeUnit * brightness))
 			{
 				led = true;
 			}
 			else
 			{
-				led = false;
+				led= false;
 			}
+			timeFrame++;
 		}
+
 		//Just a getter
 		int getTimeUnit(){
 			return timeUnit;
@@ -49,22 +55,21 @@ struct PwmLed{
 // Top leds on K64F-KIT -> creation of PwmStructs...
 PwmLed pwmLeds[g_numOfPwmLeds] =
 {
-	{ PTC0, 0 },
-	{ PTC1, 0 },
-	{ PTC2, 0 },
-	{ PTC3, 0 },
-	{ PTC4, 0 },
-	{ PTC5, 0 },
-	{ PTC7, 0 },
-	{ PTC8, 0 }
+	{ PTC0, 0, 0},
+	{ PTC1, 0, 0 },
+	{ PTC2, 0, 0 },
+	{ PTC3, 0, 0 },
+	{ PTC4, 0, 0 },
+	{ PTC5, 0, 0 },
+	{ PTC7, 0, 0 },
+	{ PTC8, 0, 0 },
+	{ PTB9, 0, 0},
+	{ PTB19, 0, 0}
 };
 
 void updater(){
-	for(int l_tick = 0; l_tick < pwmLeds[0].getTimeUnit(); l_tick++){
-		for (int l_currentLed = 0; l_currentLed < g_numOfPwmLeds; l_currentLed++)
-		{
-			pwmLeds[l_currentLed].update(l_tick);
-		}
+	for (int l_currentLed = 0; l_currentLed < g_numOfPwmLeds; l_currentLed++){
+		pwmLeds[l_currentLed].update();
 	}
 }
 
@@ -81,7 +86,7 @@ int main()
 	while (1)
 	{
 		if(!g_buttons[3]){
-			if(currentIndex == 7){
+			if(currentIndex == g_numOfPwmLeds - 1){
 				currentIndex = 0;
 			}
 			else{
@@ -93,7 +98,7 @@ int main()
 		}
 		if(!g_buttons[2]){
 			if(currentIndex == 0){
-				currentIndex = 7;
+				currentIndex = g_numOfPwmLeds - 1;
 			}
 			else{
 				currentIndex--;
@@ -104,10 +109,14 @@ int main()
 		}
 		if(!g_buttons[1] && pwmLeds[currentIndex].getBrightness() < 1.0){
 			pwmLeds[currentIndex].setBrightness(pwmLeds[currentIndex].getBrightness()+ledIncrease);
+			g_pc.printf("Current BRIGHTNESS: ");
+			g_pc.printf("%f\r\n", pwmLeds[currentIndex].getBrightness()*10);
 			wait_ms(100);
 		}
 		if(!g_buttons[0] && pwmLeds[currentIndex].getBrightness() > 0.0){
 			pwmLeds[currentIndex].setBrightness(pwmLeds[currentIndex].getBrightness()-ledIncrease);
+			g_pc.printf("Current BRIGHTNESS: ");
+			g_pc.printf("%f\r\n", pwmLeds[currentIndex].getBrightness()*10);
 			wait_ms(100);
 		}
 	}
