@@ -20,6 +20,8 @@ GNU General Public License v3.0
 
 ## LEDs:
 Source code for Leds is now in LEDs/PWM-BINARY/main.cpp
+### Serial line output: 
+$ minicom -D /dev/ttyACM0
 
 ## Authors:
 @Kulasus, @lolray
