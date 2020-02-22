@@ -16,12 +16,26 @@ GNU General Public License v3.0
 - [X] Logging
 - [X] LEDs
 - [X] LEDs with PWM
-- [ ] Test PwmLed class
+- [X] Test PwmLed class
+- [ ] Snake 
 
 ## LEDs:
 Source code for Leds is now in LEDs/PWM-BINARY/main.cpp
 ### Serial line output: 
 $ minicom -D /dev/ttyACM0
+### binaryDisplay.cpp
+Program which displays binary value which is selected with buttons
+### ledsPWM.cpp
+Program implements PwmLed class. This class represents pulse wide modulation to create illusion of brightness.
+There are also two simulations:
+- policie
+    - Function which simulates police beacon.
+- colourPicker
+    - Function which lets you select led with button and increase/decrease its brightness with buttons.
+### snake.cpp
+Program also implements PwmLed class. This program implements function which represent snake, which goes throught leds.
+You can stop him, increase or decrease his speed. There will be also representation of health and enemies.
+- [ ] Not implemented yet
 
 ## Authors:
 @Kulasus, @lolray
