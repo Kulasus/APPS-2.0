@@ -51,8 +51,8 @@ int main()
 			}
 		}
 
-		// displays selected binaryValue to console, if binaryValue is greater than 0
-
+		// displays selected binaryValue to console, if binaryValue is different from previous one
+		// this alsou prevents serial output from killing microcontrollers power storage ... 
 		if(binaryValue != previousBinaryValue){
 			g_pc.printf("%d\r\n", binaryValue);
 		}
