@@ -3,7 +3,7 @@
 
 // Constant variables
 static const int g_numOfPwmLeds = 14; // All top redLeds + All rgbLeds = 14
-static const float ledIncrease = 0.05; // 10% Increase of led brightness
+static const int ledIncrease = 10; // 10% Increase of led brightness
 static const int g_numOfRedLeds = 10; // Both top and bottom redLeds
 static const int g_numOfRgbLeds = 6; // Two rgbLeds = 2*3 pins
 static const int g_numOfButtons = 4;
@@ -11,8 +11,8 @@ static const int g_numOfButtons = 4;
 // Global variables
 int currentIndex = 0; // colourpicker function variable
 int currentIndexSignal = 0;
-float currentRedLedBrightness = 0;
-float previousRedLedBrightness = 0;
+int currentRedLedBrightness = 0;
+int previousRedLedBrightness = 0;
 // Serial line for printf output
 Serial g_pc(USBTX, USBRX);
 
@@ -43,8 +43,8 @@ class PwmLed{
 		}
 
 		// brightness setter, recalculates int value representing percents of brightness to float variable
-		void setBrightness(float brightness){
-			this->brightness = brightness;
+		void setBrightness(int brightness){
+			this->brightness = (float)brightness/100;
 		}
 
 		/* Function which is called timeUnit times. It determines if led is on or off in the current timeFrame
@@ -74,8 +74,8 @@ class PwmLed{
 			return this->timeUnit;
 		}
 		// brightness getter
-		float getBrightness(){
-			return this->brightness;
+		int getBrightness(){
+			return (int)(this->brightness*100);
 		}
 };
 
@@ -110,14 +110,14 @@ void updater(){
 
 // Function which simulates police beacon
 void policie(){;
-	pwmLeds[8].setBrightness(1.0);
+	pwmLeds[8].setBrightness(100);
 	pwmLeds[10].setBrightness(0);
 	pwmLeds[11].setBrightness(0);
-	pwmLeds[13].setBrightness(1.0);
+	pwmLeds[13].setBrightness(100);
 	wait_ms(100);
 	pwmLeds[8].setBrightness(0);
-	pwmLeds[10].setBrightness(1.0);
-	pwmLeds[11].setBrightness(1.0);
+	pwmLeds[10].setBrightness(100);
+	pwmLeds[11].setBrightness(100);
 	pwmLeds[13].setBrightness(0);
 	wait_ms(100);
 
@@ -154,60 +154,57 @@ void colourPicker(){
 	}
 
 	// Add brightness
-	if(!g_buttons[1] && pwmLeds[currentIndex].getBrightness() < 1.0){
+	if(!g_buttons[1] && pwmLeds[currentIndex].getBrightness() < 100){
 		pwmLeds[currentIndex].setBrightness(pwmLeds[currentIndex].getBrightness()+ledIncrease);
 		g_pc.printf("Current BRIGHTNESS: ");
-		g_pc.printf("%f\r\n", pwmLeds[currentIndex].getBrightness()*10);
+		g_pc.printf("%d\r\n", pwmLeds[currentIndex].getBrightness());
 		wait_ms(100);
 	}
 
 	// Decrease brightness
-	if(!g_buttons[0] && pwmLeds[currentIndex].getBrightness() > 0.0){
+	if(!g_buttons[0] && pwmLeds[currentIndex].getBrightness() > 0){
 		pwmLeds[currentIndex].setBrightness(pwmLeds[currentIndex].getBrightness()-ledIncrease);
 		g_pc.printf("Current BRIGHTNESS: ");
-		g_pc.printf("%f\r\n", pwmLeds[currentIndex].getBrightness()*10);
+		g_pc.printf("%d\r\n", pwmLeds[currentIndex].getBrightness());
 		wait_ms(100);
 	}
 }
 
 void signal(){
 	// Go to next led
-	if(!g_buttons[0] && pwmLeds[8].getBrightness() < 1.0){
+	if(!g_buttons[0] && pwmLeds[8].getBrightness() < 100){
 		pwmLeds[8].setBrightness(pwmLeds[8].getBrightness()+ledIncrease);
-		wait_ms(100);
 	}
-	if(!g_buttons[1] && pwmLeds[9].getBrightness() < 1.0){
+	if(!g_buttons[1] && pwmLeds[9].getBrightness() < 100){
 		pwmLeds[9].setBrightness(pwmLeds[9].getBrightness()+ledIncrease);
-		wait_ms(100);
 	}
-	if(!g_buttons[2] && pwmLeds[10].getBrightness() < 1.0){
+	if(!g_buttons[2] && pwmLeds[10].getBrightness() < 100){
 		pwmLeds[10].setBrightness(pwmLeds[10].getBrightness()+ledIncrease);
-		wait_ms(100);
 	}
-	if(g_buttons[0] && pwmLeds[8].getBrightness() > 0.0){
-		pwmLeds[8].setBrightness(pwmLeds[8].getBrightness()-ledIncrease);wait_ms(100);
+	if(g_buttons[0] && pwmLeds[8].getBrightness() > 0){
+		pwmLeds[8].setBrightness(pwmLeds[8].getBrightness()-ledIncrease);
 	}
-	if(g_buttons[1] && pwmLeds[9].getBrightness() > 0.0){
-		pwmLeds[9].setBrightness(pwmLeds[9].getBrightness()-ledIncrease);wait_ms(100);
+	if(g_buttons[1] && pwmLeds[9].getBrightness() > 0){
+		pwmLeds[9].setBrightness(pwmLeds[9].getBrightness()-ledIncrease);
 	}
-	if(g_buttons[2] && pwmLeds[10].getBrightness() > 0.0){
-		pwmLeds[10].setBrightness(pwmLeds[10].getBrightness()-ledIncrease);wait_ms(100);
+	if(g_buttons[2] && pwmLeds[10].getBrightness() > 0){
+		pwmLeds[10].setBrightness(pwmLeds[10].getBrightness()-ledIncrease);
 	}
 	if(!g_buttons[3]){
 		for(int i = 0; i < g_numOfPwmLeds - 3; i++){
 			pwmLeds[i].setBrightness(0);
 		}
 	}
-
 	previousRedLedBrightness = currentRedLedBrightness;
 	currentRedLedBrightness = (pwmLeds[8].getBrightness()+pwmLeds[9].getBrightness()+pwmLeds[10].getBrightness())/3;
 	if(currentRedLedBrightness != previousRedLedBrightness){
 		g_pc.printf("Current redLEDs brightness: ");
-		g_pc.printf("%f\r\n", currentRedLedBrightness);
+		g_pc.printf("%d\r\n", currentRedLedBrightness);
 	}
 	for(int i = 0; i < g_numOfPwmLeds - 6; i++){
 		pwmLeds[i].setBrightness(currentRedLedBrightness);
 	}
+	wait_ms(50);
 }
 
 int main()
