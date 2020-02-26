@@ -26,8 +26,8 @@ $ minicom -D /dev/ttyACM0
 ### binaryDisplay.cpp
 Program which displays binary value which is selected with buttons
 ### ledsPWM.cpp
-Program implements PwmLed class. This class represents pulse wide modulation to create illusion of brightness.
-There are also two simulations:
+Program implements PwmLed class. This class represents pulse wide modulation on led to create illusion of brightness.
+There are also three simulations:
 - policie
     - Function which simulates police beacon.
 - colourPicker
