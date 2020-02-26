@@ -22,7 +22,9 @@ GNU General Public License v3.0
 ## LEDs:
 Implementation of programs for leds on K64F-KIT. First part of course. Individual programs are in APPS-2.0/LEDs/PWM-BINARY/
 ### Serial line output: 
+```shell
 $ minicom -D /dev/ttyACM0
+```
 ### binaryDisplay.cpp
 Program which displays binary value which is selected with buttons
 ### ledsPWM.cpp
