@@ -25,6 +25,49 @@ Implementation of programs for leds on K64F-KIT. First part of course. Individua
 ```shell
 $ minicom -D /dev/ttyACM0
 ```
+### Complete PwmLed class:
+More information about how this works is in ledsPWM.cpp
+```cpp
+class PwmLed{
+	private:
+		DigitalOut *led;
+		float brightness;
+		static const int timeUnit = 15;
+		int timeFrame;
+
+	public:
+		PwmLed(PinName pin, int brightness)
+		{
+			this->led = new DigitalOut(pin);
+			this->setBrightness(brightness);
+			this->timeFrame = 0;
+		}
+		void setBrightness(int brightness){
+			this->brightness = (float)brightness/100;
+		}
+		void update()
+		{
+			if(this->timeFrame == timeUnit){
+				this->timeFrame = 0;
+			}
+			if (this->timeFrame < (this->timeUnit * this->brightness))
+			{
+				this->led->write(1);
+			}
+			else
+			{
+				this->led->write(0);
+			}
+			this->timeFrame++;
+		}
+		int getTimeUnit(){
+			return this->timeUnit;
+		}
+		int getBrightness(){
+			return (int)(this->brightness*100);
+		}
+};
+```
 ### binaryDisplay.cpp
 Program which displays binary value which is selected with buttons
 ### ledsPWM.cpp
