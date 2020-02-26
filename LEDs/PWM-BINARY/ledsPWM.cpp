@@ -10,9 +10,9 @@ static const int g_numOfButtons = 4;
 
 // Global variables
 int currentIndex = 0; // colourpicker function variable
-int currentIndexSignal = 0;
-int currentRedLedBrightness = 0;
-int previousRedLedBrightness = 0;
+int currentIndexSignal = 0; // signal function variable 
+int currentRedLedBrightness = 0; // signal function variable which stores current brightness of red leds
+int previousRedLedBrightness = 0; // signal function variable which stores previous brightness of red leds
 // Serial line for printf output
 Serial g_pc(USBTX, USBRX);
 
@@ -169,41 +169,53 @@ void colourPicker(){
 		wait_ms(100);
 	}
 }
-
+/* Function which calculates and sets brightness of all top red leds based on brightness of rgb led. You can set brightness of rgb led by 
+holding buttons(0-2), or reset all leds by button 3. */
 void signal(){
-	// Go to next led
+	// Increase brightness of blue led
 	if(!g_buttons[0] && pwmLeds[8].getBrightness() < 100){
 		pwmLeds[8].setBrightness(pwmLeds[8].getBrightness()+ledIncrease);
 	}
+	// Increase brightness of green led
 	if(!g_buttons[1] && pwmLeds[9].getBrightness() < 100){
 		pwmLeds[9].setBrightness(pwmLeds[9].getBrightness()+ledIncrease);
 	}
+	// Increase brightness of red led
 	if(!g_buttons[2] && pwmLeds[10].getBrightness() < 100){
 		pwmLeds[10].setBrightness(pwmLeds[10].getBrightness()+ledIncrease);
 	}
+	// Automaticaly decrease brightness of blue led
 	if(g_buttons[0] && pwmLeds[8].getBrightness() > 0){
 		pwmLeds[8].setBrightness(pwmLeds[8].getBrightness()-ledIncrease);
 	}
+	// Automaticaly decrease brightness of green led
 	if(g_buttons[1] && pwmLeds[9].getBrightness() > 0){
 		pwmLeds[9].setBrightness(pwmLeds[9].getBrightness()-ledIncrease);
 	}
+	// Automaticaly decrease brightness of red led
 	if(g_buttons[2] && pwmLeds[10].getBrightness() > 0){
 		pwmLeds[10].setBrightness(pwmLeds[10].getBrightness()-ledIncrease);
 	}
+	// Turns of all leds
 	if(!g_buttons[3]){
 		for(int i = 0; i < g_numOfPwmLeds - 3; i++){
 			pwmLeds[i].setBrightness(0);
 		}
 	}
+	// Storing brightness to prevent serial output overloading
 	previousRedLedBrightness = currentRedLedBrightness;
+	// Calculation of red leds brightness depending on sum of brightness of rgb led
 	currentRedLedBrightness = (pwmLeds[8].getBrightness()+pwmLeds[9].getBrightness()+pwmLeds[10].getBrightness())/3;
+	// Printing brightness to serial output
 	if(currentRedLedBrightness != previousRedLedBrightness){
 		g_pc.printf("Current redLEDs brightness: ");
 		g_pc.printf("%d\r\n", currentRedLedBrightness);
 	}
+	// Setting redLeds brightness to calculated value
 	for(int i = 0; i < g_numOfPwmLeds - 6; i++){
 		pwmLeds[i].setBrightness(currentRedLedBrightness);
 	}
+	// Wait to actualy see the change
 	wait_ms(50);
 }
 
