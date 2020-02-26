@@ -20,7 +20,7 @@ GNU General Public License v3.0
 - [ ] Snake 
 
 ## LEDs:
-Source code for Leds is now in LEDs/PWM-BINARY/main.cpp
+Implementation of programs for leds on K64F-KIT. First part of course. Individual programs are in APPS-2.0/LEDs/PWM-BINARY/
 ### Serial line output: 
 $ minicom -D /dev/ttyACM0
 ### binaryDisplay.cpp
@@ -36,8 +36,6 @@ There are also three simulations:
     - Function which calculates and sets brightness of top red leds based on brighntess of rgb led.
 ### snake.cpp
 Program also implements PwmLed class. This program implements function which represent snake, which goes throught leds.
-You can stop him, increase or decrease his speed. There will be also representation of health and enemies.
-- [ ] Not implemented yet
-
+You can stop him, increase or decrease his speed.
 ## Authors:
 @Kulasus, @lolray
