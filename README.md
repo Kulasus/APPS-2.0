@@ -32,6 +32,8 @@ There are also two simulations:
     - Function which simulates police beacon.
 - colourPicker
     - Function which lets you select led with button and increase/decrease its brightness with buttons.
+- singal
+    - Function which calculates and sets brightness of top red leds based on brighntess of rgb led.
 ### snake.cpp
 Program also implements PwmLed class. This program implements function which represent snake, which goes throught leds.
 You can stop him, increase or decrease his speed. There will be also representation of health and enemies.
