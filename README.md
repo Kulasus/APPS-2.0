@@ -82,5 +82,7 @@ There are also three simulations:
 ### snake.cpp
 Program also implements PwmLed class. This program implements function which represent snake, which goes throught leds.
 You can stop him, increase or decrease his speed.
+## LCD
+Implementation of programs for LCD on K64F-KIT. Second part of course. Individual programs are in APPS-2.0/LCD
 ## Authors:
 @Kulasus, @lolray
