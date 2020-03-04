@@ -27,11 +27,11 @@ struct RGB
 {
     uint8_t r, g, b;
 };
-// Graph element class implementation
+// GraphElement class implementation
 class GraphElement
 {
 public:
-    // Foreground ang background colour
+    // Foreground and background colour
     RGB fg_color, bg_color;
 	
     GraphElement(){}
@@ -83,17 +83,19 @@ private:
     }
 };
 
+// Pixel class implementation, unlike GraphElement this class have also position.
 class Pixel : public GraphElement
 {
 public:
-    // constructor
+    // Position of pixel on LCD	
+    Point2D pos;
     Pixel( Point2D t_pos, RGB t_fg_color, RGB t_bg_color ) : pos( t_pos ), GraphElement( t_fg_color, t_bg_color ) {}
     // Draw method implementation
-    virtual void draw() { drawPixel( pos.x, pos.y ); }
-    // Position of Pixel
-    Point2D pos;
+    virtual void draw() {
+    	drawPixel( pos.x, pos.y ); 
+    }   
 };
-
+// Circle class implementation
 class Circle : public GraphElement
 {
 public:
@@ -104,7 +106,8 @@ public:
 
     Circle( Point2D t_center, int32_t t_radius, RGB t_fg, RGB t_bg ) :
         center( t_center ), radius( t_radius ), GraphElement( t_fg, t_bg ) {};
-
+	
+    // Implementation of draw function using Bresenham Circle algorithm
     void draw()
     {
         int f = 1 - radius;
@@ -144,42 +147,17 @@ public:
     }
 };
 
-
-class Character : public GraphElement
-{
-public:
-    // position of character
-    Point2D pos;
-    // character
-    char character;
-
-    Character( Point2D t_pos, char t_char, RGB t_fg, RGB t_bg ) :
-      pos( t_pos ), character( t_char ), GraphElement( t_fg, t_bg ) {};
-
-    void draw()
-    {
-        for(int y = 0; y < HEIGHT; y++)
-        {
-            //int radek_fontu = font8x8[character][y];
-			int radek_fontu = font[character][y];
-            for(int x = 0; x < WIDTH; x++)
-            {
-                //if(radek_fontu & (1 << x)) drawPixel(pos.x + x, pos.y + y);		//LSB
-				if(radek_fontu & (1 << x)) drawPixel(pos.x - x + WIDTH, pos.y + y);    //MSB
-            }
-        }
-    }
-};
-
+// Line class implementation
 class Line : public GraphElement
 {
 public:
-    // the first and the last point of line
+    // The first and the last point of line
     Point2D pos1, pos2;
 
     Line( Point2D t_pos1, Point2D t_pos2, RGB t_fg, RGB t_bg ) :
       pos1( t_pos1 ), pos2( t_pos2 ), GraphElement( t_fg, t_bg ) {}
-
+    
+    // Draw function implementation using Bresenham Line algorithm
     void draw()
     {
         int x0 = pos1.x;
@@ -189,69 +167,29 @@ public:
 
         int dx =  abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
         int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-        int err = dx + dy, e2; //error value e_xy
+        int err = dx + dy, e2;
 
-        for(;;){  //loop
+        for(;;){
             drawPixel(x0, y0);
             if (x0 == x1 && y0 == y1) break;
             e2 = 2*err;
-            if (e2 >= dy) { err += dy; x0 += sx; } //e_xy+e_x > 0
-            if (e2 <= dx) { err += dx; y0 += sy; } //e_xy+e_y < 0
+            if (e2 >= dy) { err += dy; x0 += sx; }
+            if (e2 <= dx) { err += dx; y0 += sy; }
         }
     }
 };
 
-
-class Text : public GraphElement
-{
-public:
-    // position of character
-    Point2D pos;
-    // characters
-    string str;
-
-    bool horizontal = false;
-
-    Text( Point2D t_pos, string t_str, RGB t_fg, RGB t_bg, bool horizontal ) :
-      pos( t_pos ), str( t_str ), GraphElement( t_fg, t_bg )
-        {
-            this->horizontal = horizontal;
-        };
-
-    void draw()
-    {
-        int offs = 0;
-        for (int i = 0; i < str.size(); i++)
-        {
-            for(int y = 0; y < HEIGHT; y++)
-            {
-                //int radek_fontu = font8x8[str[i]][y];
-				int radek_fontu = font[str[i]][y];
-                for(int x = 0; x < WIDTH + rozdil; x++)
-                {
-                    if(horizontal)
-                    {
-						//if(radek_fontu & (1 << x)) drawPixel(pos.x + x + offs, pos.y + y);           //LSB
-                        if(radek_fontu & (1 << x)) drawPixel(pos.x+x+WIDTH+offs, pos.y+y);    //MSB
-                    }
-                    else
-                    {
-                        //if(radek_fontu & (1 << x)) drawPixel(pos.x + x, pos.y + y + offs);			//LSB
-						if(radek_fontu & (1 << x)) drawPixel(pos.x + x, pos.y + y + offs);    //MSB
-                    }
-                }
-            }
-            offs += offset;
-        }
-    }
-};
-
+// Rectangle class algorithm
 class Rectangle : public GraphElement
 {
 public:
+	// Four corners of rectangle(A,B,C,D) and center point(S)
 	Point2D pointA, pointB, pointC, pointD, pointS;
+	// Length of first and second side
 	int strana1, strana2;
+	// Colours of rectangle
 	RGB fg, bg;
+	// 6 lines representing final rectangle. 4 sides(A,B,C,D) and 2 diagonals(U1, U2)
 	Line *stranaA, *stranaB, *stranaC, *stranaD, *stranaU1, *stranaU2;
 	Rectangle(Point2D pointS, int strana1, int strana2, RGB fg, RGB bg): pointS(pointS), strana1(strana1), strana2(strana2), GraphElement(fg, bg){
 		this->pointA.x = pointS.x - strana1/2;
@@ -270,6 +208,7 @@ public:
 		this->stranaU1 = new Line({pointA.x, pointA.y}, {pointC.x, pointC.y}, fg, bg);
 		this->stranaU2 = new Line({pointB.x, pointB.y}, {pointD.x, pointD.y}, fg, bg);
 	}
+	// Draw function implementation using drawing combination of lines
 	void draw()
 	{
 		stranaA->draw();
@@ -281,16 +220,19 @@ public:
 	}
 };
 
+// Triangle class implementation TODO, not working right
 class Triangle : public GraphElement
 {
 public:
     // Center of triangle
-    Point2D center;
-    // Radius of triangle
+    Point2D center;    
+    // Length of one side of triangle
     int strana;
-
+    // Colours of triangle
     RGB fg, bg;
+    // Height of triangle
     double vyska;
+    // 
     Point2D point_c1, point_c2, point_c3, point_a1;
     Line *strana_a, *strana_b, *strana_c;
 
@@ -319,7 +261,92 @@ public:
     }
 };
 
+// Character class implementation, represents one character from font
+class Character : public GraphElement
+{
+public:
+    // Position of character
+    Point2D pos;
+    // Character represented in char -> used to select right character from fonts file using ASCII value
+    char character;
 
+    Character( Point2D t_pos, char t_char, RGB t_fg, RGB t_bg ) :
+      pos( t_pos ), character( t_char ), GraphElement( t_fg, t_bg ) {};
+      
+    // Draw function implementation using for cycles to iterate over values in fonts
+    void draw()
+    {
+    	// Iterating over rows
+        for(int y = 0; y < HEIGHT; y++)
+        {
+	    // Selecting one specific position in fonts file
+            int radek_fontu = font[character][y];
+	    
+	    // Iterating over characters until we reach the width of character (last value of character)
+            for(int x = 0; x < WIDTH; x++)
+            {
+                //if(radek_fontu & (1 << x)) drawPixel(pos.x + x, pos.y + y);	       //LSB
+		if(radek_fontu & (1 << x)) drawPixel(pos.x - x + WIDTH, pos.y + y);    //MSB
+            }
+        }
+    }
+};
+
+// Text class implementation, very similiar to character class implementation
+class Text : public GraphElement
+{
+public:
+    // Position of starting character
+    Point2D pos;
+    
+    // Array of characters (string..)
+    string str;
+	
+    // Flag which represents if text should be written horiontaly or verticaly 
+    bool horizontal = false;
+
+    Text( Point2D t_pos, string t_str, RGB t_fg, RGB t_bg, bool horizontal ) :
+      pos( t_pos ), str( t_str ), GraphElement( t_fg, t_bg )
+        {
+            this->horizontal = horizontal;
+        };
+    
+    // Implementation of draw function, similiar to character class draw function. Only difference here is that it 
+    // iterates over more characters and adds offset between them.
+    void draw()
+    {
+        int offs = 0;
+	
+	// Iterating over each character in string
+        for (int i = 0; i < str.size(); i++)
+        {
+	    // Iterating over rows
+            for(int y = 0; y < HEIGHT; y++)
+            {
+	        // Selecting one specific position in fonts file
+		int radek_fontu = font[str[i]][y];
+		
+		// Iterating over characters until we reach the width of character (last value of character)
+                for(int x = 0; x < WIDTH; x++)
+                {
+                    if(horizontal)
+                    {
+			//if(radek_fontu & (1 << x)) drawPixel(pos.x + x + offs, pos.y + y);           //LSB
+                        if(radek_fontu & (1 << x)) drawPixel(pos.x - x + WIDTH + offs, pos.y + y);    //MSB
+                    }
+                    else
+                    {
+                        //if(radek_fontu & (1 << x)) drawPixel(pos.x + x, pos.y + y + offs);	      //LSB
+			if(radek_fontu & (1 << x)) drawPixel(pos.x - x + WIDTH, pos.y + y + offs);    //MSB
+                    }
+                }
+            }
+            offs += offset;
+        }
+    }
+};
+
+// Creation of basic colours
 RGB black = {0, 0, 0};
 RGB white = {255, 255, 255};
 RGB bordo = {128, 0, 32};
@@ -328,8 +355,6 @@ RGB green = {0, 255, 0};
 RGB blue = {0, 0, 255};
 RGB red = {255, 0, 0};
 RGB deeppink = {255, 20, 147};
-
-
 
 int main()
 {
