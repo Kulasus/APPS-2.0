@@ -1,89 +1,84 @@
-// **************************************************************************
-//
-//               Demo program for labs
-//
-// Subject:      Computer Architectures and Parallel systems
-// Author:       Petr Olivka, petr.olivka@vsb.cz, 08/2016
-// Organization: Department of Computer Science, FEECS,
-//               VSB-Technical University of Ostrava, CZ
-//
-// File:         Main program for LCD module
-//
-// **************************************************************************
-
 #include "mbed.h"
 #include "lcd_lib.h"
 #include <string>
-//#include "font8x8.cpp"		//neodkomentovavat
-#include "font22x36_msb.h"
+#include "font22x36_msb.h"		// Font import
 #include <vector>
 
-//#define WIDTH 8
-//#define HEIGHT 8
-#define WIDTH 22
-#define HEIGHT 36
-#define FONT font
+#define WIDTH 22	// Font width
+#define HEIGHT 36	// Font height
 int rozdil = HEIGHT - WIDTH;
 
 // Serial line for printf output
 Serial pc(USBTX, USBRX);
 
-// two dimensional array with fixed size font
-//extern uint8_t font8x8[256][8];		//odkomenovat u 8x8
-
 using namespace std;
 
-DigitalOut bl(PTC3, 0);		// backlight
+DigitalOut g_backLight(PTC3, 0);		// Display backlight
 
-int offset = 22;
-int dist = 10;
-bool sviti = true;
-int T = 15;
+int offset = 22; //Space between font characters
 
-// Simple graphic interface
-
+// Structure which holds coordinates of one point
 struct Point2D
 {
     int32_t x, y;
 };
-
+// Structure which holds values of RGB of one colour
 struct RGB
 {
     uint8_t r, g, b;
 };
-
+// Graph element class implementation
 class GraphElement
 {
 public:
-    // foreground and background color
+    // Foreground ang background colour
     RGB fg_color, bg_color;
-
-    // constructor
+	
     GraphElement(){}
 
-    GraphElement( RGB t_fg_color, RGB t_bg_color ) :
-        fg_color( t_fg_color ), bg_color( t_bg_color ) {}
+    GraphElement( RGB t_fg_color, RGB t_bg_color ) : fg_color( t_fg_color ), bg_color( t_bg_color ) {}
 
-    // ONLY ONE INTERFACE WITH LCD HARDWARE!!!
-    void drawPixel( int32_t t_x, int32_t t_y ) { lcd_put_pixel( t_x, t_y, convert_RGB888_to_RGB565( fg_color ) ); }
+    // Function which draws pixel on certain position with foreground colour
+    void drawPixel( int32_t t_x, int32_t t_y ) {
+	    lcd_put_pixel( t_x, t_y, convert_RGB888_to_RGB565( fg_color )); 
+    }
 
-    // Draw graphics element
+    // Function which draws the specific graphical element
     virtual void draw() = 0;
 
-    // Hide graphics element
+    // Function which creates illusion of disapearement of certail graphical element (calls swap_fg_bg_color() function)
     virtual void hide() { swap_fg_bg_color(); draw(); swap_fg_bg_color(); }
-    //virtual void hideVert() { swap_fg_bg_color(); drawVert(); swap_fg_bg_color(); }
+	
 private:
-    // swap foreground and backgroud colors
-    void swap_fg_bg_color() { RGB l_tmp = fg_color; fg_color = bg_color; bg_color = l_tmp; }
+    // Function which swaps foreground and backgroun colour
+    void swap_fg_bg_color() {
+	    RGB l_tmp = fg_color;
+	    fg_color = bg_color;
+	    bg_color = l_tmp;
+    }
 
-    // conversion of 24-bit RGB color into 16-bit color format
-    int convert_RGB888_to_RGB565( RGB t_color )
+    // Function which converts 24-bit RGB colour to 16-bit RGB colour
+    int convert_RGB888_to_RGB565(RGB t_color)
     {
-        union URGB {struct {int b:5; int g:6; int r:5;}; short rgb565; } urgb;
+	// Union which represents 16-bit RGB colour -> Union unlike struct allocates shared memory for all of its variables. 
+	// It's easier for us then to use bit operations like bit shifitng, because all this operations takes place in one shared memory.
+	// If we would use struct, there would be risk of accessing different memory then we want.
+        union URGB {
+		struct 
+		{
+			int b:5; 
+			int g:6; 
+			int r:5;
+		}; 
+		short rgb565; 
+	} urgb;
+	
+	// This calculation shifts bits of each color value to right. After that it uses bitwise AND to anulate reamining bits
+	// in 24-bit part
         urgb.r = (t_color.r >> 3) & 0x1F;
         urgb.g = (t_color.g >> 2) & 0x3F;
         urgb.b = (t_color.b >> 3) & 0x1F;
+	    
         return urgb.rgb565;
     }
 };
@@ -340,27 +335,10 @@ int main()
 {
 	// Serial line initialization
 	pc.baud(115200);
- 	lcd_init();				// LCD initialization
-	lcd_clear();			// LCD clear screen
-
-	int l_color_red = 0xF800;
-	int l_color_green = 0x07E0;
-	int l_color_blue = 0x001F;
-	int l_color_white = 0xFFFF;
-
-	Point2D centerPoints;
-	centerPoints.x = 160;
-	centerPoints.y = 120;
-
-	Pixel center(centerPoints, white, black);
-	center.draw();
-	Rectangle kokotek(centerPoints, 200,75,white,black);
-	kokotek.draw();
-
-	//    Text( Point2D t_pos, string t_str, RGB t_fg, RGB t_bg, bool horizontal ) :
-	Text randomText(centerPoints,"ahoj", cyan, black, true);
-	randomText.draw();
-
+	// LCD initialization
+ 	lcd_init();
+	lcd_clear();
+	// CODE here
 	return 0;
 }
 
