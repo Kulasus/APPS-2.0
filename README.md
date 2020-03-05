@@ -84,5 +84,27 @@ Program also implements PwmLed class. This program implements function which rep
 You can stop him, increase or decrease his speed.
 ## LCD
 Implementation of programs for LCD on K64F-KIT. Second part of course. Individual programs are in APPS-2.0/LCD
+### shapes.cpp
+Program implements multiple classes which represents shapes (triangle, circle...) and classes for displaying text on the LCD
+### Drawing character on LCD from font.h file logic
+```cpp
+// Draw function implementation using for cycles to iterate over values in fonts
+    void draw()
+    {
+    	// Iterating over rows
+        for(int y = 0; y < HEIGHT; y++)
+        {
+	    // Selecting one specific position in fonts file
+            int radek_fontu = font[character][y];
+
+	    // Iterating over characters until we reach the width of character (last value of character)
+            for(int x = 0; x < WIDTH; x++)
+            {
+                //if(radek_fontu & (HEIGHT-WIDTH << x)) drawPixel(pos.x + x, pos.y + y);	       //LSB
+            	if(radek_fontu & (HEIGHT-WIDTH << x)) drawPixel(pos.x - x + WIDTH, pos.y + y);    //MSB
+            }
+        }
+    }
+```
 ## Authors:
 @Kulasus, @lolray
