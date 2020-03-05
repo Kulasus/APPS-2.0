@@ -107,7 +107,7 @@ Program implements multiple classes which represents shapes (triangle, circle...
     }
 ```
 ## Authors:
-@Kulasus, @lolray
+[@Kulasus](https://github.com/Kulasus), [@lolray](https://github.com/lolray)
 
 ## Special thanks:
-@michalscepka
+[@michalscepka](https://github.com/michalscepka)
