@@ -180,7 +180,7 @@ public:
 };
 
 
-// CircleFull class implementation
+// CircleFull class implementation, basically like circle but filled with colour
 class CircleFull : public GraphElement
 {
 public:
@@ -215,6 +215,7 @@ public:
 
 		Line *line;
 
+	// Drawing lines between points instead of just points
         while(x < y)
         {
             if(f >= 0)
@@ -235,8 +236,8 @@ public:
             Line line4({x0+y,y0-x},{x0-y,y0-x},fg,bg);
 			line4.draw();
         }
-		Line middleLine({center.x-radius,center.y},{center.x+radius,center.y},fg,bg);
-		middleLine.draw();
+	Line middleLine({center.x-radius,center.y},{center.x+radius,center.y},fg,bg);
+	middleLine.draw();
     }
 };
 
@@ -427,24 +428,25 @@ int main()
 	// LCD initialization
  	lcd_init();
 	lcd_clear();
-	// CODE here
+	// Testing drawing shapes
 	Point2D centerOfScreen;
 	centerOfScreen.x = 160;
 	centerOfScreen.y = 120;
 	CircleFull circle(centerOfScreen, 74, green, black);
 	Rectangle rectangle(centerOfScreen, 150,150,red,black);
+	Triangle triangle({160,120},148,cyan,black);
 	circle.draw();
 	rectangle.draw();
+	triangle.draw();
+	// Converting integer to char array
 	char buf[32];
 	int cislo = 123456789;
 	sprintf(buf, "%d", cislo);
+	// Testing drawing converted integer horizontaly and verticaly
 	Text text({160-(strlen(buf)/2*WIDTH+2*offset), 20}, buf, deeppink, black, true);
 	Text text2({160-(strlen(buf)/2*WIDTH+2*offset), 20}, buf, deeppink, black, false);
 	text.draw();
 	text2.draw();
-	Triangle triangle({160,120},148,cyan,black);
-	triangle.draw();
-
 
 	return 0;
 }
