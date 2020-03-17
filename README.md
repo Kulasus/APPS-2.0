@@ -9,15 +9,15 @@ GNU General Public License v3.0
 ## Useful links:
 [Petr Olivka's web page about course](http://poli.cs.vsb.cz/edu/apps) </br>
 [Course syllabus](http://poli.cs.vsb.cz/edu/apps/lab/apps-syllabus.pdf) </br>
+[Petr Olivka's youtube channel (Assembly language tutorials)](https://www.youtube.com/channel/UCVsJ3Mvp8HL_kFgqgSpHjlA) </br>
+[Assembly language example files and references](http://poli.cs.vsb.cz/edu/apps/soj/) </br>
+[Assembly language textbook](http://poli.cs.vsb.cz/edu/apps/soj/down/apps-soj-skripta.pdf) </br>
 [CUDA programming](http://poli.cs.vsb.cz/edu/apps/cuda/cuda-programming.pdf) </br>
 [CUDA tutorial](https://developer.nvidia.com/cuda-education-training)
 
 ## Current TODOs:
-- [X] Logging
-- [X] LEDs
-- [X] LEDs with PWM
-- [X] Test PwmLed class
-- [ ] Snake 
+- [] Assembly language part 0
+- [] Assembly language part 1
 
 ## LEDs:
 Implementation of programs for leds on K64F-KIT. First part of course. Individual programs are in APPS-2.0/LEDs/PWM-BINARY/
@@ -106,6 +106,8 @@ Program implements multiple classes which represents shapes (triangle, circle...
         }
     }
 ```
+## Assembler
+Fourth part of the course focused on programming in Assembler&C languages. Individual programs can be found in APPS-2.0/Assembler
 ## Authors:
 [@Kulasus](https://github.com/Kulasus), [@lolray](https://github.com/lolray)
 
