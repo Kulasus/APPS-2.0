@@ -8,6 +8,9 @@
 	extern g_char, g_num32, g_num64
 	extern g_array_char, g_array_num32, g_array_num64
 	extern g_index
+	extern g_lastIndexOfArray
+	extern g_firstIndexOfArray
+	extern g_index_plus_one
 ; Text section is used for defining functions
 	section .text
 ;*****************************************************************
@@ -94,4 +97,86 @@ set_array_num32_index_num32_in_asm:
 	leave
 	ret
 
+;*****************************************************************
+	; Definition of function switch between array num32 array num64 in asm
+	global switch_between_array_num32_array_num64_in_asm
+switch_between_array_num32_array_num64_in_asm:
+	enter 0,0
+
+	mov EAX, [g_array_num32 + 0 * 4]
+	mov RBX, [g_array_num64 + 0 * 8]
+	mov [g_array_num64 + 0 * 8], RAX
+	mov [g_array_num32 + 0 * 4], EBX
+	mov ECX, [g_array_num32 + 1 * 4]
+	mov RDX, [g_array_num64 + 1 * 8]
+	mov [g_array_num64 + 1 * 8], RCX
+	mov [g_array_num32 + 1 * 4], EDX
+	mov EDI, [g_array_num32 + 2 * 4]
+	mov RSI, [g_array_num64 + 2 * 8]
+	mov [g_array_num64 + 2 * 8], RDI
+	mov [g_array_num32 + 2 * 4], ESI
+
+	leave
+	ret
+
+;*****************************************************************
+	; Definition of function switch first and last index array num32 in asm
+	global switch_first_and_last_index_array_num32_in_asm
+switch_first_and_last_index_array_num32_in_asm:
+	enter 0,0
+
+	mov ECX, [g_firstIndexOfArray]
+	mov EDX, [g_lastIndexOfArray]
+	mov EDI, [g_array_num32 + ECX * 4]
+	mov ESI, [g_array_num32 + EDX * 4]
+	mov [g_array_num32 + EDX * 4], EDI
+	mov [g_array_num32 + ECX * 4], ESI
+
+	leave
+	ret
+
+;*****************************************************************
+	; Definition of function switch neighbors array num32 in asm
+	global switch_neighbors_array_num32_in_asm
+switch_neighbors_array_num32_in_asm:
+	enter 0,0
+
+	mov EAX, [g_array_num32 + 0 * 4]
+	mov EBX, [g_array_num32 + 1 * 4]
+	mov [g_array_num32 + 0 * 4], EBX
+	mov [g_array_num32 + 1 * 4], EAX
+	mov EAX, [g_array_num32 + 2 * 4]
+	mov EBX, [g_array_num32 + 3 * 4]
+	mov [g_array_num32 + 2 * 4], EBX
+	mov [g_array_num32 + 3 * 4], EAX
+	mov EAX, [g_array_num32 + 4 * 4]
+	mov EBX, [g_array_num32 + 5 * 4]
+	mov [g_array_num32 + 4 * 4], EBX
+	mov [g_array_num32 + 5 * 4], EAX
+	mov EAX, [g_array_num32 + 6 * 4]
+	mov EBX, [g_array_num32 + 7 * 4]
+	mov [g_array_num32 + 6 * 4], EBX
+	mov [g_array_num32 + 7 * 4], EAX
+	mov EAX, [g_array_num32 + 8 * 4]
+	mov EBX, [g_array_num32 + 9 * 4]
+	mov [g_array_num32 + 8 * 4], EBX
+	mov [g_array_num32 + 9 * 4], EAX
+
+	leave
+	ret
+
+;*****************************************************************
+	; Definition of function set array num32 neighbors value
+	; Does not work !!!
+	global set_array_num32_neighbors_value
+set_array_num32_neighbors_value:
+	enter 0,0
+
+	mov EAX, [g_index]
+	mov ECX, [g_index_plus_one]
+	mov EBX, [g_array_num32 + ECX * 4]
+	mov [g_array_num32 + EAX * 4], EBX
+
+	leave
+	ret
 ; labels:
