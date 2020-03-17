@@ -75,6 +75,7 @@ int main()
     print_array_num64();
     switch_neighbors_array_num32_in_asm();
     print_array_num32();
+    g_index_plus_on = g_index +1;
     set_array_num32_neighbors_value();
     print_array_num32();
 }
