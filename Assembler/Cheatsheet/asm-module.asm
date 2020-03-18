@@ -7,10 +7,10 @@
 ; 	extern means variables are not declared in this file
 	extern g_char, g_num32, g_num64
 	extern g_array_char, g_array_num32, g_array_num64
-	extern g_index
-	extern g_lastIndexOfArray
-	extern g_firstIndexOfArray
-	extern g_index_plus_one
+	extern g_index, g_index_plus_one
+	extern g_firstIndexOfArray, g_lastIndexOfArray
+	extern g_switchIndex1, g_switchIndex2
+
 ; Text section is used for defining functions
 	section .text
 ;*****************************************************************
@@ -98,7 +98,7 @@ set_array_num32_index_num32_in_asm:
 	ret
 
 ;*****************************************************************
-	; Definition of function switch between array num32 array num64 in asm
+	; Definition of function switch_between_array_num32_array_num64_in_asm
 	global switch_between_array_num32_array_num64_in_asm
 switch_between_array_num32_array_num64_in_asm:
 	enter 0,0
@@ -120,7 +120,7 @@ switch_between_array_num32_array_num64_in_asm:
 	ret
 
 ;*****************************************************************
-	; Definition of function switch first and last index array num32 in asm
+	; Definition of function switch_first_and_last_index_array_num32_in_asm
 	global switch_first_and_last_index_array_num32_in_asm
 switch_first_and_last_index_array_num32_in_asm:
 	enter 0,0
@@ -136,7 +136,7 @@ switch_first_and_last_index_array_num32_in_asm:
 	ret
 
 ;*****************************************************************
-	; Definition of function switch neighbors array num32 in asm
+	; Definition of function switch_neighbors_array_num32_in_asm
 	global switch_neighbors_array_num32_in_asm
 switch_neighbors_array_num32_in_asm:
 	enter 0,0
@@ -166,8 +166,7 @@ switch_neighbors_array_num32_in_asm:
 	ret
 
 ;*****************************************************************
-	; Definition of function set array num32 neighbors value
-	; Does not work !!!
+	; Definition of function set_array_num32_neighbors_value
 	global set_array_num32_neighbors_value
 set_array_num32_neighbors_value:
 	enter 0,0
@@ -179,4 +178,22 @@ set_array_num32_neighbors_value:
 
 	leave
 	ret
+
+;******************************************************************
+	; Definition of function switch_two_values_index_num32_in_asm	
+	global switch_two_values_index_num32_in_asm
+switch_two_values_index_num32_in_asm:
+	enter 0,0
+
+	mov EAX, [g_switchIndex1]
+	mov EBX, [g_switchIndex2]
+	mov ECX, [g_array_num32 + EAX * 4]
+	mov EDX, [g_array_num32 + EBX * 4]
+	mov [g_array_num32 + EAX * 4], EDX
+	mov [g_array_num32 + EBX * 4], ECX
+
+	leave
+	ret
+
+
 ; labels:
