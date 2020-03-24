@@ -5,15 +5,30 @@
 
 ; Variables
 ; 	extern means variables are not declared in this file
+;-----------------------------------------------------------------
+;   VARIABLES FOR PART 1
+;-----------------------------------------------------------------
 	extern g_char, g_num32, g_num64
 	extern g_array_char, g_array_num32, g_array_num64
 	extern g_index, g_index_plus_one
 	extern g_firstIndexOfArray, g_lastIndexOfArray
 	extern g_switchIndex1, g_switchIndex2
 
+;-----------------------------------------------------------------
+;   VARIABLES FOR PART 2
+;-----------------------------------------------------------------
+	extern g_rgb565_b1, g_rgb565_b2
+	extern g_char_array, g_char_mean
+	extern g_number
+	extern g_int_array, g_int_array_sum
+	extern g_positive, g_negative
+	extern g_string_len, g_string
 ; Text section is used for defining functions
 	section .text
 ;*****************************************************************
+;-----------------------------------------------------------------
+;   FUNCTIONS FOR PART 1
+;-----------------------------------------------------------------
 	; Definition of function set_variables_in_asm
 	global set_variables_in_asm
 set_variables_in_asm:
@@ -195,5 +210,161 @@ switch_two_values_index_num32_in_asm:
 	leave
 	ret
 
+;-----------------------------------------------------------------
+;   FUNCTIONS FOR PART 2
+;-----------------------------------------------------------------
+;******************************************************************
+	; Definition of function move_blue
+	global move_blue
+move_blue:
+	enter 0,0
 
-; labels:
+	mov AX, 0b11111         ; blue mask -> 0b11111 = 0b0000000000011111
+	mov CX, [g_rgb565_b1] 
+	and CX, AX				; only blue
+	not AX					; mask for green and red
+	and [g_rgb565_b2], AX	; only red and green
+	or [g_rgb565_b2], CX
+
+	leave
+	ret
+;******************************************************************
+	; Definition of function mean_char_array
+	global mean_char_array
+mean_char_array:
+	enter 0,0
+
+	movsx RAX, byte [g_char_array]  ; sum
+	movsx RCX, byte [g_char_array + 1]
+	add RAX, RCX 					; sum += g_char_array[1]
+	movsx RCX, byte [g_char_array + 2]
+	add RAX, RCX 					; sum += g_char_array[2]
+	movsx RCX, byte [g_char_array + 3]
+	add RAX, RCX 					; sum += g_char_array[3]
+
+	shr RAX, 2						; sum / 4
+	mov [g_char_mean], RAX
+
+	leave
+	ret
+;******************************************************************
+	; Definition of function number_mul100
+	global number_mul100
+number_mul100:
+	enter 0,0
+
+	mov ECX, [g_number]
+	shl ECX, 2				; *4
+	mov EAX, ECX
+	shl EAX, 3				; *4*8
+	add ECX, EAX
+	shl EAX, 1				; *4*8*2
+	add ECX, EAX
+
+	mov [g_number], ECX 
+
+	leave
+	ret
+
+;******************************************************************
+	; Definition of function sum_int_array
+	global sum_int_array
+sum_int_array:
+	enter 0,0
+	
+	xor EAX, EAX   		; mov EAX, 0 / sub EAX, EAX
+	; for (rdx = 0; rdx < 10; rdx++){}
+	mov RDX, 0
+.back:
+	cmp RDX, 10 		; sub rdx, 10
+	jge .endfor
+
+	add EAX, [g_int_array + RDX * 4]
+
+	inc RDX
+	jmp .back
+	; endfor
+.endfor:
+	mov [g_int_array_sum], EAX
+	leave
+	ret
+
+
+;******************************************************************
+	; Definition of function posneg_int_array
+	global posneg_int_array
+posneg_int_array:
+	enter 0,0
+
+	mov RDX, 0
+.back:
+	cmp RDX, 10 		
+	jge .endfor
+
+	cmp dword [g_int_array + RDX * 4], 0
+	je .continue
+	jg .positive
+	inc dword [g_negative]
+	jmp .continue
+
+.positive:
+	inc dword [g_positive]
+	jmp .continue
+.continue:
+	inc RDX
+	jmp .back
+.endfor:
+	leave
+	ret
+
+
+;******************************************************************
+	; Definition of function string_len
+	global string_len
+string_len:
+	enter 0,0
+
+	mov RCX, g_string ; -> no []? it means pointers bruh ;)
+
+.back:
+	cmp byte [RCX], 0
+	je .end
+	inc RCX
+	jmp .back
+
+.end:
+	sub RCX, g_string
+	mov [g_string_len], ECX
+
+	leave
+	ret
+
+;******************************************************************
+	; Definition of function string_low
+	global string_low
+string_low:
+	enter 0,0
+
+	mov RCX, 0
+
+.back:
+	cmp byte [g_string + RCX], 0
+	je .end
+	cmp byte [g_string + RCX], 'A'
+	jb .continue
+	cmp byte [g_string + RCX], 'Z'
+	ja .continue
+	add byte [g_string + RCX], 'a' - 'A'
+
+
+.continue:
+	inc RCX
+	jmp .back
+
+.end:
+	sub RCX, g_string
+	mov [g_string_len], ECX
+
+
+	leave
+	ret

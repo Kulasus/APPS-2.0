@@ -1,6 +1,8 @@
 
 #include <stdio.h>
 
+//--------PART-1--MOV/MOVSX/MOVZX----------------------------------------------------------------------------------------------------------
+
 #define numArrayLength 10
 
 // Variables
@@ -61,8 +63,34 @@ void switch_neigbors_refactored_array_num32_in_asm(){ // Switches neighbors valu
     }
 }
 
+//--------PART-2--ARYTHMETICAL OPERATIONS----------------------------------------------------------------------------------------------------------
+
+// Variables
+unsigned short g_rgb565_b1 = 0b1100011100011000;
+unsigned short g_rgb565_b2 = 0b0000011100001110;
+char g_char_array[4] = {-128,-128,-128,-128};
+char g_char_mean = 0;
+int g_number = 3333;
+int g_int_array[10] = {10,20,-30,0,50,60,70,80,90,100};
+int g_int_array_sum = 0;
+int g_positive = 0;
+int g_negative = 0;
+char g_string[] = "Jebem ti boga!";
+int g_string_len = 0;
+
+// Functions which are defined in assembler
+void move_blue();
+void mean_char_array();
+void number_mul100(); // x*100 = x*(4+96) = x*(4+32+64)
+void sum_int_array();
+void posneg_int_array();
+void string_len();
+void string_low();
+//--------MAIN-------------------------------------------------------------------------------------------------------------------------------------
 int main()
 {
+    // Uncomment whatever you want -> One comment block = one function
+
     /*
     printf("g_char %c g_num32 %d g_num64 %ld\n",g_char,g_num32,g_num64);
     set_variables_in_asm();
@@ -130,7 +158,45 @@ int main()
     print_array_num32();
     */
 
+    /*
     print_array_num32();
     switch_neigbors_refactored_array_num32_in_asm();
     print_array_num32();
+    */
+
+    /*
+    printf("b1 %04X b2 %04X\n", g_rgb565_b1,g_rgb565_b2);
+    move_blue();
+    printf("b1 %04X b2 %04X\n", g_rgb565_b1,g_rgb565_b2);
+    */
+   
+    /*
+    mean_char_array();
+    printf("mean: %d\n", g_char_mean);
+    */
+
+    /*
+    number_mul100();
+    printf("number %d\n", g_number);
+    */
+
+    /*
+    sum_int_array();
+    printf("suma: %d\n", g_int_array_sum);
+    */
+
+    /*
+    posneg_int_array();
+    printf("pos: %d neg: %d\n", g_positive, g_negative);
+    */
+
+    /*
+    string_len();
+    printf("delka je %d", g_string_len);
+    */
+
+    /*
+    string_low();
+    printf("string %s\n", g_string);
+    */
 }
