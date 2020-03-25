@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 //--------PART-1--MOV/MOVSX/MOVZX----------------------------------------------------------------------------------------------------------
@@ -70,14 +71,28 @@ unsigned short g_rgb565_b2 = 0b0000011100001110;
 char g_char_array[4] = {-128,-128,-128,-128};
 char g_char_mean = 0;
 int g_number = 3333;
-int g_int_array[10] = {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+int g_int_array[10] = {-10,-20,-31,-14,5,-6, 7,-8,7,25};
 int g_int_array_sum = 0;
 int g_positive = 0;
 int g_negative = 0;
 char g_string[] = "Jebem ti boga!";
 int g_string_len = 0;
-int g_minimum;
-int g_maximum;
+int g_minimum = 0;
+int g_maximum = 0;
+int g_minimum_pos = 0;
+int g_maximum_pos = 0;
+int g_minimum_neg = 0;
+int g_maximum_neg = 0;
+char g_string_one[] = "4511321111";
+char g_number_to_find = '1'; 
+int g_counter = 0;
+char g_brackets[] = "((ahojsss s)s)))))))))";
+int g_brackets_right = 0;
+int g_brackets_left = 0;
+char g_banan = '1';
+char g_jabko = 'A';
+int g_bin_num = 1; // 0b00000101
+char g_bin_num_char[8] = "00000000";
 
 // Functions which are defined in assembler
 void move_blue();
@@ -89,6 +104,13 @@ void string_len();
 void string_low();
 void find_minimum();
 void find_maximum();
+void find_minimum_pos();
+void find_maximum_neg();
+void count_of_number();
+void check_brackets();
+void change_string();
+void num_to_bin_char();
+void num_to_hexa_char();
 //--------MAIN-------------------------------------------------------------------------------------------------------------------------------------
 int main()
 {
@@ -203,11 +225,43 @@ int main()
     printf("string %s\n", g_string);
     */
 
-   find_minimum();
-   printf("minimum is %d\n", g_minimum);
+    /*
+    find_minimum();
+    printf("minimum is %d\n", g_minimum);
+    */
 
+    /*
+    find_maximum();
+    printf("maximum is %d\n", g_maximum);
+    */
 
+    /*
+    find_maximum_neg();
+    printf("maximum neg is %d\n", g_maximum_neg);
+    */
 
-   find_maximum();
-   printf("maximum is %d\n", g_maximum);
+    /*
+    find_minimum_pos();
+    printf("minimum positive is %d\n",g_minimum_pos);
+    */
+
+    /*
+    count_of_number();
+    printf("count: %d\n", g_counter);
+    */
+
+    /*
+    check_brackets();
+    printf("left: %d right: %d\n", g_brackets_left, g_brackets_right);
+    */
+
+    change_string();
+    printf("string %s\n", g_string_one);
+
+    num_to_bin_char();
+    printf("string: %s\n", g_bin_num_char);
+
+    num_to_hexa_char();
+    printf("string: %s\n", g_bin_num_char);
+
 }

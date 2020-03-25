@@ -24,6 +24,11 @@
 	extern g_positive, g_negative
 	extern g_string_len, g_string
 	extern g_minimum, g_maximum
+	extern g_minimum_pos, g_maximum_neg
+	extern g_string_one, g_counter, g_number_to_find
+	extern g_brackets, g_brackets_left, g_brackets_right
+	extern g_banan, g_jabko
+	extern g_bin_num, g_bin_num_char
 ; Text section is used for defining functions
 	section .text
 ;*****************************************************************
@@ -369,12 +374,13 @@ string_low:
 	leave
 	ret
 
+;******************************************************************
+	; Definition of function find_minimum
 	global find_minimum
 find_minimum:
 	enter 0,0
 
-	
-	mov EAX, [g_int_array + 0 * 4]
+	mov EAX, 0
 	mov EDX, 0
 
 .back:
@@ -384,7 +390,7 @@ find_minimum:
 	add EDI, 1
 	mov ESI, [g_int_array + EDI * 4]
 	cmp EAX, ESI
-	jb .continue
+	jl .continue
 
 .isMinimum:
 	mov EAX, ESI
@@ -398,12 +404,15 @@ find_minimum:
 	leave
 	ret
 
+
+;******************************************************************
+	; Definition of function find_maximum
 	global find_maximum
 find_maximum:
 	enter 0,0
 
 	
-	mov EAX, [g_int_array + 0 * 4]
+	mov EAX, 0
 	mov EDX, 0
 
 .back:
@@ -413,7 +422,7 @@ find_maximum:
 	add EDI, 1
 	mov ESI, [g_int_array + EDI * 4]
 	cmp EAX, ESI
-	ja .continue
+	jg .continue
 
 .isMaximum:
 	mov EAX, ESI
@@ -424,5 +433,251 @@ find_maximum:
 
 .endfor:
 	mov [g_maximum], EAX
+	leave
+	ret
+
+;******************************************************************
+	; Definition of function find_maximum_neg
+	global find_maximum_neg
+find_maximum_neg:
+	enter 0,0
+
+	call find_minimum
+	mov EDX, 0 ; i
+
+.back:
+	cmp EDX, 9
+	jge .endfor
+	mov EDI, EDX
+	add EDI, 1
+	mov ESI, [g_int_array + EDI * 4] 
+	cmp ESI, 0
+	jge .continue
+	cmp EAX, ESI ; EAX -> max | ESI ->i+1
+	jg .continue 
+
+.isMaximumNeg:
+	mov EAX, ESI
+
+.continue:
+	inc EDX
+	jmp .back
+
+.endfor:
+	mov [g_maximum_neg], EAX
+	leave
+	ret
+
+;******************************************************************
+; Definition of function find_minimum_pos
+	global find_minimum_pos
+find_minimum_pos:
+	enter 0,0
+
+	call find_maximum
+	mov EDX, 0 ; i
+
+.back:
+	cmp EDX, 9
+	jge .endfor
+	mov EDI, EDX
+	add EDI, 1
+	mov ESI, [g_int_array + EDI * 4] 
+	cmp ESI, 0
+	jle .continue
+	cmp EAX, ESI ; EAX -> min | ESI ->i+1
+	jl .continue 
+
+.isMinimumPos:
+	mov EAX, ESI
+
+.continue:
+	inc EDX
+	jmp .back
+
+.endfor:
+	mov [g_minimum_pos], EAX
+	leave
+	ret
+
+;******************************************************************
+; 			Definition of function count_of_number
+	global count_of_number
+count_of_number:
+	enter 0,0
+
+	mov RDX, 0
+	mov ECX, 0
+	mov AL, [g_number_to_find]
+
+.back:
+	cmp byte [g_string_one + RDX], 0
+	je .end
+	cmp byte [g_string_one + RDX], AL
+	je .counter
+	
+.continue:
+	inc RDX
+	jmp .back
+
+.counter:
+	inc ECX
+	inc RDX
+	jmp .back
+
+.end:
+	mov [g_counter], ECX
+	leave
+	ret
+
+;******************************************************************
+; 			Definition of function check_brackets
+	global check_brackets
+check_brackets:
+	enter 0,0
+
+	mov RDX, 0
+	mov EAX, 0 
+	mov EBX, 0
+
+.back:
+	cmp byte [g_brackets + RDX], 0
+	je .end
+	cmp byte [g_brackets + RDX], '('
+	je .counter1
+	cmp byte [g_brackets + RDX], ')'
+	je .counter2
+
+
+.continue:
+	inc RDX
+	jmp .back
+
+.counter2:
+	inc EBX
+	inc RDX
+	jmp .back
+
+.counter1:
+	inc EAX
+	inc RDX
+	jmp .back
+
+.end:
+	mov [g_brackets_left], EAX
+	mov [g_brackets_right], EBX
+	leave
+	ret
+
+;******************************************************************
+; 			Definition of function change_string
+	global change_string
+change_string:
+	enter 0,0
+
+	mov RCX, 0
+	mov AL, [g_banan]
+	mov DL, [g_jabko]
+
+.back:
+	cmp byte [g_string_one + RCX], 0
+	je .end
+	cmp byte [g_string_one + RCX], AL
+	je .change
+
+.continue:
+	inc RCX
+	jmp .back
+
+.change:
+	mov byte [g_string_one + RCX], DL
+	inc RCX
+	jmp .back
+
+.end:
+	mov [g_counter],RDX
+	leave
+	ret
+
+
+;******************************************************************
+; 			Definition of function num_to_bin_char
+	global num_to_bin_char
+num_to_bin_char:
+	enter 0,0
+
+	mov RAX, 7
+	mov RCX, [g_bin_num]
+
+.back:
+	cmp RCX, 0
+	je .end
+	shr RCX, 1
+	jc .one
+	mov byte [g_bin_num_char + RAX], '0'
+	jmp .continue
+
+.one:
+	mov byte [g_bin_num_char + RAX], '1'
+	
+
+.continue:
+	dec RAX
+	jmp .back
+
+.end:
+	leave
+	ret
+
+;******************************************************************
+; 			Definition of function num_to_hexa_char
+	global num_to_hexa_char
+num_to_hexa_char:
+	enter 0,0
+
+	mov RAX, 7
+	mov RCX, [g_bin_num]
+
+.back:
+	cmp RCX, 0
+	je .end
+	mov RDX, RCX
+	and RDX, 15	; here is reminder
+	shr RCX, 4	; shifting te number
+	cmp RDX, 10
+	je .A
+	cmp RDX, 11
+	je .B
+	cmp RDX, 12
+	je .C
+	cmp RDX, 13
+	je .D
+	cmp RDX, 14
+	je .E
+	cmp RDX, 15
+	je .F
+	add RDX, 48
+	mov [g_bin_num_char + RAX], DL
+	jmp .continue
+
+.A:
+mov byte [g_bin_num_char + RAX], 'A'
+.B:
+mov byte [g_bin_num_char + RAX], 'B'
+.C:
+mov byte [g_bin_num_char + RAX], 'C'
+.D:
+mov byte [g_bin_num_char + RAX], 'D'
+.E:
+mov byte [g_bin_num_char + RAX], 'E'
+.F:
+mov byte [g_bin_num_char + RAX], 'F'
+	
+
+.continue:
+	dec RAX
+	jmp .back
+
+.end:
 	leave
 	ret
