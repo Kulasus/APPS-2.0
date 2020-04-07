@@ -110,12 +110,18 @@ Program implements multiple classes which represents shapes (triangle, circle...
 Fourth part of the course focused on programming in Assembler&C languages. Individual programs can be found in APPS-2.0/Assembler
 ### Cheatsheet
 In this file you can find various useful functions in Assembler, basicaly all other files in this repo will somehow be subsets of this file.
+### Cheatsheet 2
+Extended Cheatsheet 1 
 ### Printing_Value_test
 In this file you can find very basic function in assembler which will set value of variable to 'System funguje.' and print it to console.
 ### Basic_MOV_functions
 In this file you can find first assigment from Assembler language. All functions are using only MOV/MOVSX instructions. There are multiple functions, some of them are using functions in C to take a use of cycles. Some of them are totaly bruteforce and wont work on different values or different array lengths.
 ### Basic_MOV_functions_bruteforce
 This file contains only bruteforce subset of functions from Basic_MOV_functions. 
+### Parameters
+This file contains functions based around taking function parameters from C to assembler and returning values using RAX register.
+### Parameters Realtime
+This file contains other functions based around taking function parameters from C to assembler and returng values using RAX register. This functions were in realtime test.
 ## Authors:
 [@Kulasus](https://github.com/Kulasus), [@lolray](https://github.com/lolray)
 
