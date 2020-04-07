@@ -122,6 +122,8 @@ This file contains only bruteforce subset of functions from Basic_MOV_functions.
 This file contains functions based around taking function parameters from C to assembler and returning values using RAX register.
 ### Parameters Realtime
 This file contains other functions based around taking function parameters from C to assembler and returng values using RAX register. This functions were in realtime test.
+### Divide&Conquer
+This file contains functions based around division, multiplication, using stack and conditional movement 
 ## Authors:
 [@Kulasus](https://github.com/Kulasus), [@lolray](https://github.com/lolray)
 
