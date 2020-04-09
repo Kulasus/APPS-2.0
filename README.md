@@ -124,6 +124,8 @@ This file contains functions based around taking function parameters from C to a
 This file contains other functions based around taking function parameters from C to assembler and returng values using RAX register. This functions were in realtime test.
 ### Divide&Conquer
 This file contains functions based around division, multiplication, using stack and conditional movement 
+### Divide&Conquer Realtime
+This file contains functions based around division, multiplication, using stack and conditional movement. This functions were in realtime test
 ## Authors:
 [@Kulasus](https://github.com/Kulasus), [@lolray](https://github.com/lolray)
 
