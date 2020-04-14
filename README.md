@@ -106,6 +106,10 @@ Program implements multiple classes which represents shapes (triangle, circle...
         }
     }
 ```
+## RDS
+Third part of the course focused on programming in C and working with Radio kit. Individual programs can be found in APPS-2.0/RDS
+### Rds_reader
+THis folder contains program which takes example data from live broadcasting and works with them.
 ## Assembler
 Fourth part of the course focused on programming in Assembler&C languages. Individual programs can be found in APPS-2.0/Assembler
 ### Cheatsheet
