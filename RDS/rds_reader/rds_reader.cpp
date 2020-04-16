@@ -14,12 +14,16 @@
 #include <ctype.h>
 #include <stdint.h>
 
+char station[8];
+char radiotext[65];
+int hours = 0;
+int minutes = 0;
 int bytes[13];
 
 void print_array(int *array, int length){
     for (int i = 0; i < length; i++)
     {
-        printf("%d ", array[i]);
+        printf("%X ", array[i]);
     }
     printf("\n");
 }
@@ -118,8 +122,6 @@ class RDSReader
 };
 
 
-
-
 #define FM_RDS_STATUS_ANS_LEN   13
 
 int main( int t_argn, char **t_argc )
@@ -135,15 +137,101 @@ int main( int t_argn, char **t_argc )
 
     printf("Start...\n");
     void *l_ptr = malloc(FM_RDS_STATUS_ANS_LEN);
-    int count = 0;
-    while ( rds.get_rds_status( l_ptr ) > 0 )
+    int groups_count = 0;
+    int good_groups_count = 0;
+    int bad_groups_count = 0;
+    int b_groups_count = 0;
+    int a_groups_count = 0;
+    int group0a_count = 0;
+    int group2a_count = 0;
+    int group4a_count = 0;
+    int group0b_count = 0;
+    while ( rds.get_rds_status( l_ptr ) == FM_RDS_STATUS_ANS_LEN)
     {
-        count++;
-        printf("Reading...\n");
-        print_array(bytes, 13);
+        usleep(2000);
+        //print_array(bytes, 13);
+        printf("\n station: %s ",station);
+        printf("| radiotext: %s ",radiotext);
+        if(minutes < 10){
+            printf("| time: %d:0%d",hours,minutes);
+        }
+        else
+        {
+            printf("| time: %d:%d",hours,minutes);
+        }
+        groups_count++;
+        if((bytes[1] & 2) == 2 || (bytes[12] & 3) == 3 || (bytes[12] & 12) == 12 || (bytes[12] & 48) == 12 || (bytes[12] & 192) == 12){
+            bad_groups_count++;
+        }
+        else{
+            good_groups_count++;
+        }
+        // Group 0A logic STATION
+        if((bytes[6] & 248) == 0){
+            group0a_count++;
+            if((bytes[7] & 3) == 0){
+                station[0] = bytes[10];
+                station[1] = bytes[11];
+            }
+            else if((bytes[7] & 3) == 1){
+                station[2] = bytes[10];
+                station[3] = bytes[11];
+            }
+            else if((bytes[7] & 3) == 2){
+                station[4] = bytes[10];
+                station[5] = bytes[11];
+            }
+            else if((bytes[7] & 3) == 3){
+                station[6] = bytes[10];
+                station[7] = bytes[11];
+            }
+        }
+        // Group 2A logic RADIOTEXT
+        else if((bytes[6] & 248) == 32){
+            group2a_count++;
+            int index = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                if((bytes[7] & 15) == i){
+                    radiotext[index]=bytes[8];
+                    radiotext[index+1]=bytes[9];
+                    radiotext[index+2]=bytes[10];
+                    radiotext[index+3]=bytes[11];
+                }
+                index+=4;
+            }
+        }
+        // Group 4A logic TIME
+        else if((bytes[6] & 248) == 64){
+            group4a_count++;
+            hours = 0;
+            minutes = 0;
+            if(bytes[9] & 1 == 1){
+                hours+=16;
+            }
+            bool positive = bytes[11] & 32 != 32;
+            float halfs = (bytes[11] & 31) % 2;
+            if(halfs > 0){
+                minutes+=30;
+                hours += ((bytes[11] & 31) - 1) / 2;
+            } 
+            else
+            {
+                hours += (bytes[11] & 31) / 2;   
+            }
+            int pom = bytes[10];
+            minutes += (bytes[10] << 2) & 60;
+            hours += (pom >> 4);
+            minutes += bytes[11] >> 6 & 3;
+        }
     }
-    printf("End...\n");
-    printf("Lines: %d\n", count);
+    printf("\nEnd...\n");
+    printf("Total groups received: %d\n", groups_count);
+    printf("good groups: %d\n", good_groups_count);
+    printf("bad groups: %d\n", bad_groups_count);
+    printf("0a groups: %d\n", group0a_count);   
+    printf("2a groups: %d\n", group2a_count);  
+    printf("4a groups: %d\n", group4a_count);  
 
     rds.close_file();
 }
